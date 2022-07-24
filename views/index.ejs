@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>카트 트랙 맞추기</title>
+    <meta name="description" content="카트 트랙 맞추가">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <!-- <link href="/assets/main.min.css" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+</head>
+<style>
+    @font-face {
+        font-family: nexon_bold;
+        src: url(/font/nexon_bold.otf);
+    }
+
+    @font-face {
+        font-family: nexon;
+        src: url(/font/nexon.otf);
+    }
+
+    h1,
+    h3 {
+        margin-top: 20px;
+        text-align: center;
+        font-family: 'nexon_bold', sans-serif;
+    }
+
+    p {
+        text-align: center;
+        font-family: 'nexon', sans-serif;
+    }
+
+    .theme_check {
+        text-align: center;
+        font-family: 'nexon', sans-serif;
+    }
+
+    form {
+        margin: 0 auto;
+    }
+
+</style>
+
+<body>
+    <h1>카트라이더 트랙 맞추기</h1>
+    <p>총 10개의 문제가 제공됩니다.<br>
+        제시되는 트랙 이미지를 보고 트랙명을 정확하게 작성하면 됩니다.</p>
+    <div class="alert alert-info" role="alert" style="width: 600px; margin: 0 auto; text-align: center;">
+        현재 테마 선택 기능은 작동하지 않습니다. 모든 테마에 대해 임의의 트랙이 제시됩니다.
+    </div>
+    <h3>테마 선택</h3>
+    <form action="/" method="post">
+        <div class="theme_check">
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme1" value="1" checked disabled> 1920</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme2" value="1" checked disabled> WKC</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme3" value="1" checked disabled> 공동묘지</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme4" value="1" checked disabled> 광산</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme5" value="1" checked disabled> 네모</label><br>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme6" value="1" checked disabled> 노르테유</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme7" value="1" checked disabled> 놀이동산</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme8" value="1" checked disabled> 님프</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme9" value="1" checked disabled> 대저택</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme10" value="1" checked disabled> 도검</label><br>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme11" value="1" checked disabled> 동화</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme12" value="1" checked disabled> 마비노기</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme13" value="1" checked disabled> 메카닉</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme14" value="1" checked disabled> 문힐시티</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme15" value="1" checked disabled> 브로디</label><br>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme16" value="1" checked disabled> 비치</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme17" value="1" checked disabled> 빌리지</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme18" value="1" checked disabled> 사막</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme19" value="1" checked disabled> 신화</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme20" value="1" checked disabled> 아이스</label><br>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme21" value="1" checked disabled> 어비스</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme22" value="1" checked disabled> 올림포스</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme23" value="1" checked disabled> 월드</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme24" value="1" checked disabled> 쥐라기</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme25" value="1" checked disabled> 차이나</label><br>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme26" value="1" checked disabled> 카멜롯</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme27" value="1" checked disabled> 코리아</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme28" value="1" checked disabled> 팩토리</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme29" value="1" checked disabled> 포레스트</label>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme30" value="1" checked disabled> 해적</label><br>
+            <label><input class="form-check-input mt-1" type="checkbox" name="theme31" value="1" checked disabled> 황금문명</label><br><br>
+            <input type="submit" class="btn btn-primary mt-2" value="게임 시작">
+        </div>
+    </form>
+</body>
+</html>

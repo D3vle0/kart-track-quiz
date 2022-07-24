@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>카트 트랙 맞추기</title>
+    <meta name="description" content="카트 트랙 맞추가">
+    <!-- <link href="/assets/main.min.css" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+</head>
+<style>
+    @font-face {
+        font-family: nexon_bold;
+        src: url("/font/nexon_bold.otf");
+    }
+
+    @font-face {
+        font-family: nexon;
+        src: url("/font/nexon.otf");
+    }
+
+    h1,
+    h3 {
+        margin-top: 20px;
+        text-align: center;
+        font-family: 'nexon_bold', sans-serif;
+    }
+
+    p {
+        text-align: center;
+        font-family: 'nexon', sans-serif;
+    }
+
+    .theme_check {
+        text-align: center;
+        font-family: 'nexon', sans-serif;
+    }
+
+    form {
+        margin: 0 auto;
+    }
+
+    body {
+        text-align: center;
+    }
+
+    .circle-progress-value {
+        stroke-width: 6px;
+        stroke: hsl(39, 100%, 50%);
+    }
+
+    .circle-progress-circle {
+        stroke-width: 6px;
+        stroke: hsl(39, 100%, 85%);
+    }
+
+    .circle-progress-text {
+        fill: hsl(39, 100%, 50%);
+    }
+
+    .circle-progress {
+        width: 400px;
+        height: auto;
+    }
+
+    button {
+        font-size: 20px;
+    }
+</style>
+
+<body>
+    <h1>결과</h1>
+    <div class="progress"></div>
+    <a href="/"><button>돌아가기</button></a>
+</body>
+<script src="https://tigrr.github.io/circle-progress/js/circle-progress.js"></script>
+<script>
+    new CircleProgress('.progress', {
+        max: 100,
+        value: <%= result %>,
+        textFormat: 'percent',
+    });
+</script>
+
+</html>
