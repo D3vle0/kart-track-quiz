@@ -8,7 +8,7 @@ import { quizRouter } from './routes/quizRouter';
 
 export const app = express();
 
-// 뷰 템플릿 디렉터리 경로 자동 감지 (로컬 및 Vercel 서버리스 환경 완벽 호환)
+// 뷰 템플릿 디렉터리 경로 자동 감지
 const resolveViewsDir = (): string => {
     const candidates = [
         path.join(process.cwd(), 'views'),
@@ -62,10 +62,25 @@ app.use(
     })
 );
 
-// 라우터 연결
+// 라우터 연결 (루트 및 Vercel rewrite /api 경로 동시 지원)
 app.use('/', quizRouter);
+app.use('/api', quizRouter);
 
 // 404 핸들러
 app.use((req, res) => {
     res.status(404).render('index', { error: '페이지를 찾을 수 없습니다.' });
+});
+
+// 전역 에러 핸들러 (Vercel에서 500 크래시 방지 및 원인 출력)
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('[Server Error]:', err);
+    res.status(500).send(`
+        <div style="font-family: sans-serif; padding: 24px;">
+            <h2>500 - 서버 오류가 발생했습니다</h2>
+            <pre style="background: #f8f9fa; padding: 16px; border-radius: 8px; border: 1px solid #ddd; overflow: auto;">
+${err.stack || err.message || err}
+            </pre>
+            <a href="/">메인으로 돌아가기</a>
+        </div>
+    `);
 });

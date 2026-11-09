@@ -1,6 +1,5 @@
-import path from 'path';
-import fs from 'fs';
 import { Track, QuizSubmission, QuizGradingDetail, QuizResult } from '../types/track';
+import rawTrackData from '../data/track.json';
 
 class TrackService {
     private tracks: Track[] = [];
@@ -12,42 +11,7 @@ class TrackService {
     }
 
     private loadTracks(): void {
-        let parsed: Array<{ id: string; name: string }> | null = null;
-
-        // 1. require를 통한 정적 번들 로드 시도 (Vercel 및 번들러 자동 추적)
-        try {
-            parsed = require('../../public/track.json');
-        } catch (_) {
-            // require 실패 시 파일 시스템 탐색으로 진행
-        }
-
-        // 2. 파일 시스템 다각도 탐색 (Vercel /var/task 및 로컬 빌드 대응)
-        if (!parsed || !Array.isArray(parsed)) {
-            const candidates = [
-                path.join(process.cwd(), 'public/track.json'),
-                path.resolve(__dirname, '../../public/track.json'),
-                path.resolve(__dirname, '../public/track.json')
-            ];
-
-            for (const candidate of candidates) {
-                if (fs.existsSync(candidate)) {
-                    try {
-                        const rawData = fs.readFileSync(candidate, 'utf-8');
-                        parsed = JSON.parse(rawData);
-                        break;
-                    } catch (e) {
-                        console.warn(`[TrackService] 파일 파싱 실패: ${candidate}`, e);
-                    }
-                }
-            }
-        }
-
-        if (!parsed || !Array.isArray(parsed)) {
-            console.error('[TrackService] 트랙 데이터 로드 실패: track.json을 찾을 수 없습니다.');
-            this.tracks = [];
-            return;
-        }
-
+        const parsed = rawTrackData as Array<{ id: string; name: string }>;
         const themeSet = new Set<string>();
 
         this.tracks = parsed.map((item) => {
@@ -87,13 +51,11 @@ class TrackService {
         if (selectedThemes.length > 0) {
             const themeSet = new Set(selectedThemes);
             const filtered = this.tracks.filter((track) => themeSet.has(track.theme));
-            // 필터링된 결과가 있다면 해당 풀 사용, 없다면 전체 풀 사용
             if (filtered.length > 0) {
                 pool = filtered;
             }
         }
 
-        // 배열 복사 후 셔플
         const shuffled = [...pool];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
