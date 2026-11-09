@@ -12,31 +12,58 @@ class TrackService {
     }
 
     private loadTracks(): void {
-        const jsonPath = path.resolve(__dirname, '../../public/track.json');
+        let parsed: Array<{ id: string; name: string }> | null = null;
+
+        // 1. require를 통한 정적 번들 로드 시도 (Vercel 및 번들러 자동 추적)
         try {
-            const rawData = fs.readFileSync(jsonPath, 'utf-8');
-            const parsed = JSON.parse(rawData) as Array<{ id: string; name: string }>;
-
-            const themeSet = new Set<string>();
-
-            this.tracks = parsed.map((item) => {
-                const theme = item.name.split(' ')[0] || '기타';
-                themeSet.add(theme);
-                const track: Track = {
-                    id: item.id,
-                    name: item.name,
-                    theme
-                };
-                this.trackMap.set(item.id, track);
-                return track;
-            });
-
-            this.themes = Array.from(themeSet).sort();
-            console.log(`[TrackService] 총 ${this.tracks.length}개 트랙, ${this.themes.length}개 테마 로드 완료`);
-        } catch (error) {
-            console.error('[TrackService] 트랙 데이터 로드 실패:', error);
-            this.tracks = [];
+            parsed = require('../../public/track.json');
+        } catch (_) {
+            // require 실패 시 파일 시스템 탐색으로 진행
         }
+
+        // 2. 파일 시스템 다각도 탐색 (Vercel /var/task 및 로컬 빌드 대응)
+        if (!parsed || !Array.isArray(parsed)) {
+            const candidates = [
+                path.join(process.cwd(), 'public/track.json'),
+                path.resolve(__dirname, '../../public/track.json'),
+                path.resolve(__dirname, '../public/track.json')
+            ];
+
+            for (const candidate of candidates) {
+                if (fs.existsSync(candidate)) {
+                    try {
+                        const rawData = fs.readFileSync(candidate, 'utf-8');
+                        parsed = JSON.parse(rawData);
+                        break;
+                    } catch (e) {
+                        console.warn(`[TrackService] 파일 파싱 실패: ${candidate}`, e);
+                    }
+                }
+            }
+        }
+
+        if (!parsed || !Array.isArray(parsed)) {
+            console.error('[TrackService] 트랙 데이터 로드 실패: track.json을 찾을 수 없습니다.');
+            this.tracks = [];
+            return;
+        }
+
+        const themeSet = new Set<string>();
+
+        this.tracks = parsed.map((item) => {
+            const theme = item.name.split(' ')[0] || '기타';
+            themeSet.add(theme);
+            const track: Track = {
+                id: item.id,
+                name: item.name,
+                theme
+            };
+            this.trackMap.set(item.id, track);
+            return track;
+        });
+
+        this.themes = Array.from(themeSet).sort();
+        console.log(`[TrackService] 총 ${this.tracks.length}개 트랙, ${this.themes.length}개 테마 로드 완료`);
     }
 
     public getAllTracks(): Track[] {
