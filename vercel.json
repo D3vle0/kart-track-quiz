@@ -7,11 +7,8 @@
     }
   ],
   "functions": {
-    "api/index.js": {
-      "includeFiles": [
-        "views/**",
-        "public/track.json"
-      ]
+    "api/index.ts": {
+      "includeFiles": "views/**"
     }
   }
 }
