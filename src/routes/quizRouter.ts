@@ -66,8 +66,12 @@ quizRouter.post('/', (req: Request, res: Response) => {
         selectedThemes.push(req.body.themes);
     }
 
-    // 퀴즈 문제 10개 생성 (중복 없음, 선택 테마 없을 시 전체 대상)
-    const quiz = trackService.createQuiz(selectedThemes, 10);
+    // 문제 수 파싱 및 3 ~ 30 사이로 유효성 검증 (기본값: 10)
+    const rawCount = parseInt(req.body.count || req.body.questionCount, 10);
+    const count = isNaN(rawCount) ? 10 : Math.max(3, Math.min(30, rawCount));
+
+    // 퀴즈 문제 생성 (중복 없음, 선택 테마 없을 시 전체 대상)
+    const quiz = trackService.createQuiz(selectedThemes, count);
 
     // 세션에 문제 id 목록 저장 (파일 시스템 대신 세션 메모리 격리)
     if (req.session) {

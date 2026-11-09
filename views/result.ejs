@@ -76,6 +76,13 @@
 <body>
     <h1>게임 결과</h1>
     <div class="progress my-4"></div>
+    <% if (typeof totalCount !== 'undefined') { %>
+        <p class="fs-4 mb-4">
+            총 <strong><%= totalCount %></strong>문제 중 
+            <strong class="text-primary"><%= correctCount %></strong>문제를 맞혔습니다!
+            <span class="text-muted fs-6">(정답률: <%= result %>%)</span>
+        </p>
+    <% } %>
     <div class="mb-4">
         <a href="/" class="btn btn-primary btn-lg px-4">다시 도전하기</a>
     </div>

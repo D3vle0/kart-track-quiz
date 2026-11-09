@@ -20,8 +20,13 @@
         src: url(/font/nexon.otf);
     }
 
-    h1,
-    h3 {
+    body {
+        background-color: #f8f9fa;
+        font-family: 'nexon', sans-serif;
+        padding-bottom: 60px;
+    }
+
+    h1, h3 {
         margin-top: 20px;
         text-align: center;
         font-family: 'nexon_bold', sans-serif;
@@ -32,9 +37,18 @@
         font-family: 'nexon', sans-serif;
     }
 
+    .setup-card {
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        max-width: 720px;
+        margin: 0 auto 24px auto;
+        border: 1px solid #e9ecef;
+    }
+
     .theme_check {
         text-align: center;
-        font-family: 'nexon', sans-serif;
         max-width: 720px;
         margin: 0 auto;
     }
@@ -48,18 +62,56 @@
     form {
         margin: 0 auto;
     }
+
+    .count-display {
+        font-size: 28px;
+        font-weight: bold;
+        color: #0d6efd;
+    }
 </style>
 
 <body>
     <h1>카트라이더 트랙 맞추기</h1>
-    <p>총 10개의 문제가 제공됩니다.<br>
-        제시되는 트랙 이미지를 보고 트랙명을 정확하게 작성하면 됩니다.</p>
-    <div class="alert alert-success" role="alert" style="max-width: 600px; margin: 0 auto 20px auto; text-align: center;">
-        원하는 테마를 선택하여 퀴즈를 풀어보세요! (선택하지 않으면 전체 테마에서 무작위 출제)
+    <p>제시되는 트랙 이미지를 보고 트랙명을 정확하게 작성하면 됩니다.<br>
+        원하는 문제 수와 테마를 선택한 뒤 시작하세요!</p>
+
+    <div class="alert alert-success" role="alert" style="max-width: 720px; margin: 0 auto 24px auto; text-align: center;">
+        💡 테마를 선택하지 않으면 모든 테마에서 무작위로 출제됩니다.
     </div>
-    <h3>테마 선택</h3>
+
     <form action="/" method="post">
-        <div class="theme_check">
+        <!-- 1. 문제 수 설정 섹션 -->
+        <div class="setup-card text-center">
+            <h3 class="mb-3">문제 수 선택</h3>
+            <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+                <button type="button" class="btn btn-outline-primary btn-lg px-3" onclick="adjustCount(-1)">−</button>
+                <div style="width: 140px;">
+                    <input type="number" 
+                           class="form-control form-control-lg text-center count-display" 
+                           id="questionCount" 
+                           name="count" 
+                           value="10" 
+                           min="3" 
+                           max="30" 
+                           required 
+                           oninput="validateCount(this)">
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-lg px-3" onclick="adjustCount(1)">+</button>
+            </div>
+            <div class="text-muted small mb-3">최소 3개 ~ 최대 30개 설정 가능</div>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setCount(3)">3문제</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setCount(5)">5문제</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setCount(10)">10문제 (기본)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setCount(15)">15문제</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setCount(20)">20문제</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setCount(30)">30문제</button>
+            </div>
+        </div>
+
+        <!-- 2. 테마 설정 섹션 -->
+        <div class="setup-card theme_check">
+            <h3 class="mb-3">테마 선택</h3>
             <div class="mb-3">
                 <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="toggleAll(true)">전체 선택</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll(false)">전체 해제</button>
@@ -98,11 +150,35 @@
                 <label><input class="form-check-input mt-1" type="checkbox" name="theme31" value="1" checked> 황금문명</label>
             </div>
             <br>
-            <input type="submit" class="btn btn-primary btn-lg mt-2 px-5" value="게임 시작">
+            <input type="submit" class="btn btn-primary btn-lg mt-2 px-5 py-3 fs-5 fw-bold" value="게임 시작하기">
         </div>
     </form>
 
     <script>
+        const countInput = document.getElementById('questionCount');
+
+        function setCount(val) {
+            countInput.value = Math.max(3, Math.min(30, val));
+        }
+
+        function adjustCount(delta) {
+            let current = parseInt(countInput.value, 10) || 10;
+            setCount(current + delta);
+        }
+
+        function validateCount(input) {
+            let val = parseInt(input.value, 10);
+            if (isNaN(val)) return;
+            if (val > 30) input.value = 30;
+            if (val < 3 && input.value.length >= 2) input.value = 3;
+        }
+
+        countInput.addEventListener('blur', function() {
+            let val = parseInt(this.value, 10);
+            if (isNaN(val) || val < 3) this.value = 3;
+            if (val > 30) this.value = 30;
+        });
+
         function toggleAll(checked) {
             document.querySelectorAll('.theme_check input[type="checkbox"]').forEach(function (cb) {
                 cb.checked = checked;
