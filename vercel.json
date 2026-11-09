@@ -1,14 +1,26 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "src": "api/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["views/**"]
+      }
     }
   ],
-  "functions": {
-    "api/index.ts": {
-      "includeFiles": "views/**"
+  "routes": [
+    {
+      "src": "/track/(.*)",
+      "dest": "/public/track/$1"
+    },
+    {
+      "src": "/font/(.*)",
+      "dest": "/public/font/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "api/index.ts"
     }
-  }
+  ]
 }
