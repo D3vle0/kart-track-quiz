@@ -40,85 +40,203 @@
     }
 
     .quiz-container {
-        max-width: 680px;
+        max-width: 640px;
         margin: 0 auto;
+    }
+
+    .progress-wrapper {
+        background: #e9ecef;
+        border-radius: 20px;
+        height: 12px;
+        overflow: hidden;
+        margin: 16px 0 24px 0;
+    }
+
+    .progress-bar-custom {
+        background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .step-card {
+        display: none;
+        animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .step-card.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .question-card {
         background: #ffffff;
-        border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        padding: 28px;
         margin-bottom: 24px;
         border: 1px solid #e9ecef;
     }
 
+    .track-image-container {
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
     .question-card img {
         max-width: 100%;
-        width: 320px;
+        width: 360px;
         height: auto;
-        border-radius: 8px;
+        border-radius: 10px;
         border: 1px solid #dee2e6;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .badge-number {
-        font-size: 15px;
-        padding: 6px 12px;
+        font-size: 16px;
+        padding: 8px 16px;
         border-radius: 20px;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 20px;
     }
 </style>
 
 <body>
     <div class="quiz-container px-3">
         <h1>카트라이더 트랙 맞추기</h1>
-        <p>각 문제의 이미지를 보고 트랙명을 입력하세요.<br><small>(Enter 키를 누르면 다음 문제로 자동 이동합니다)</small></p>
+        <p class="mb-2">제시된 이미지를 보고 트랙명을 입력하세요.<br><small>(Enter 키를 누르면 다음 문제로 자동 이동합니다)</small></p>
+
+        <!-- 진행 상황 프로그레스 바 -->
+        <div class="progress-wrapper">
+            <div id="quizProgressBar" class="progress-bar-custom" style="width: 0%;"></div>
+        </div>
 
         <form id="quizForm" action="/submit" method="post">
             <% for(var i = 0; i < res.length; i++){ %>
-                <div class="question-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary badge-number">문제 <%= i + 1 %> / <%= res.length %></span>
-                    </div>
+                <div class="step-card <%= i === 0 ? 'active' : '' %>" id="step-<%= i %>">
+                    <div class="question-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-primary badge-number">문제 <%= i + 1 %> / <%= res.length %></span>
+                            <span class="text-muted small">진행률: <span id="percent-<%= i %>"><%= Math.round(((i + 1) / res.length) * 100) %></span>%</span>
+                        </div>
 
-                    <img src="/track/<%= res[i]['id'] %>.png" alt="트랙 이미지" class="mb-3">
+                        <div class="track-image-container">
+                            <img src="/track/<%= res[i]['id'] %>.png" alt="트랙 이미지">
+                        </div>
 
-                    <input type="hidden" name="answer<%= i %>" value="<%= res[i]['id'] %>">
-                    <div class="input-group" style="max-width: 380px; margin: 0 auto;">
-                        <input type="text" 
-                               class="form-control form-control-lg quiz-input" 
-                               placeholder="트랙 이름을 입력하세요" 
-                               required 
-                               autocomplete="off"
-                               name="input<%= i %>" 
-                               data-index="<%= i %>">
+                        <input type="hidden" name="answer<%= i %>" value="<%= res[i]['id'] %>">
+                        <div style="max-width: 400px; margin: 0 auto;">
+                            <input type="text" 
+                                   class="form-control form-control-lg text-center quiz-input" 
+                                   placeholder="트랙 이름을 입력하세요" 
+                                   autocomplete="off"
+                                   name="input<%= i %>" 
+                                   data-index="<%= i %>">
+                        </div>
+
+                        <!-- 이전 / 다음 / 제출 버튼 -->
+                        <div class="nav-buttons">
+                            <button type="button" 
+                                    class="btn btn-outline-secondary btn-lg px-4" 
+                                    onclick="navigateStep(<%= i - 1 %>)" 
+                                    <%= i === 0 ? 'disabled style="visibility: hidden;"' : '' %>>
+                                이전
+                            </button>
+
+                            <% if (i < res.length - 1) { %>
+                                <button type="button" 
+                                        class="btn btn-primary btn-lg px-4" 
+                                        onclick="navigateStep(<%= i + 1 %>)">
+                                    다음 문제
+                                </button>
+                            <% } else { %>
+                                <button type="button" 
+                                        class="btn btn-success btn-lg px-5 fw-bold" 
+                                        onclick="submitQuiz()">
+                                    정답 제출하기
+                                </button>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             <% } %>
-
-            <div class="d-grid gap-2" style="max-width: 380px; margin: 0 auto;">
-                <button type="submit" class="btn btn-primary btn-lg py-3">정답 제출하기</button>
-            </div>
         </form>
     </div>
 
     <script>
-        // Enter 키 입력 시 폼 즉시 제출 방지 및 다음 문항으로 포커스 이동
+        const totalSteps = <%= res.length %>;
+        let currentStep = 0;
+
+        function updateProgress(step) {
+            const percentage = Math.round(((step + 1) / totalSteps) * 100);
+            const bar = document.getElementById('quizProgressBar');
+            if (bar) {
+                bar.style.width = percentage + '%';
+            }
+        }
+
+        function navigateStep(targetStep) {
+            if (targetStep < 0 || targetStep >= totalSteps) return;
+
+            // 현재 스텝 숨기기
+            const currentCard = document.getElementById('step-' + currentStep);
+            if (currentCard) {
+                currentCard.classList.remove('active');
+            }
+
+            // 대상 스텝 보이기
+            currentStep = targetStep;
+            const targetCard = document.getElementById('step-' + currentStep);
+            if (targetCard) {
+                targetCard.classList.add('active');
+                // 해당 스텝의 input에 포커스
+                const input = targetCard.querySelector('.quiz-input');
+                if (input) {
+                    input.focus();
+                }
+            }
+
+            updateProgress(currentStep);
+        }
+
+        function submitQuiz() {
+            document.getElementById('quizForm').submit();
+        }
+
+        // Enter 키 입력 처리
         const inputs = document.querySelectorAll('.quiz-input');
         inputs.forEach((input, index) => {
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    if (index + 1 < inputs.length) {
-                        inputs[index + 1].focus();
+                    if (index + 1 < totalSteps) {
+                        navigateStep(index + 1);
                     } else {
-                        // 마지막 문항일 경우 폼 제출
-                        document.getElementById('quizForm').submit();
+                        submitQuiz();
                     }
                 }
             });
         });
 
-        // 첫 번째 입력창 자동 포커스
+        // 초기 로드 시 1번 문제 프로그레스 바 설정 및 포커스
+        updateProgress(0);
         if (inputs.length > 0) {
             inputs[0].focus();
         }
