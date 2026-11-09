@@ -84,3 +84,6 @@ ${err.stack || err.message || err}
         </div>
     `);
 });
+
+export default app;
+
