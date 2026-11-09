@@ -11,12 +11,7 @@
   ],
   "routes": [
     {
-      "src": "/track/(.*)",
-      "dest": "/public/track/$1"
-    },
-    {
-      "src": "/font/(.*)",
-      "dest": "/public/font/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
