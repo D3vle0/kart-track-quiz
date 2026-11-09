@@ -2,8 +2,8 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/((?!api|track|font|favicon.ico).*)",
-      "destination": "/api/$1"
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ],
   "functions": {
