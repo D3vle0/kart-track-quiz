@@ -1,14 +1,14 @@
 {
   "name": "kart-track-quiz",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/server.js",
   "repository": "https://github.com/D3vle0/kart-track-quiz",
   "author": "D3vle0 <choice7203@dimigo.hs.kr>",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "node dist/server.js",
     "build": "tsc -p .",
-    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts"
+    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/server.ts"
   },
   "dependencies": {
     "body-parser": "^2.4.0",
