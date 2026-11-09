@@ -183,6 +183,7 @@
     <script>
         const totalSteps = <%= res.length %>;
         let currentStep = 0;
+        let isNavigating = false; // 중복 건너뛰기 방지 플래그
 
         function updateProgress(step) {
             const percentage = Math.round(((step + 1) / totalSteps) * 100);
@@ -193,7 +194,13 @@
         }
 
         function navigateStep(targetStep) {
+            if (isNavigating) return;
             if (targetStep < 0 || targetStep >= totalSteps) return;
+
+            isNavigating = true;
+            setTimeout(() => {
+                isNavigating = false;
+            }, 250);
 
             // 현재 스텝 숨기기
             const currentCard = document.getElementById('step-' + currentStep);
@@ -206,31 +213,56 @@
             const targetCard = document.getElementById('step-' + currentStep);
             if (targetCard) {
                 targetCard.classList.add('active');
-                // 해당 스텝의 input에 포커스
-                const input = targetCard.querySelector('.quiz-input');
-                if (input) {
-                    input.focus();
-                }
+                // IME 입력 버퍼 정리 후 다음 인풋에 안전하게 포커스
+                setTimeout(() => {
+                    const input = targetCard.querySelector('.quiz-input');
+                    if (input) {
+                        input.focus();
+                    }
+                }, 40);
             }
 
             updateProgress(currentStep);
         }
 
         function submitQuiz() {
+            if (isNavigating) return;
+            isNavigating = true;
             document.getElementById('quizForm').submit();
         }
 
-        // Enter 키 입력 처리
+        // Enter 키 입력 처리 (한글 IME 조합 더블 엔터 및 다음 인풋 누수 방지)
         const inputs = document.querySelectorAll('.quiz-input');
         inputs.forEach((input, index) => {
+            let isComposing = false;
+
+            input.addEventListener('compositionstart', () => {
+                isComposing = true;
+            });
+
+            input.addEventListener('compositionend', () => {
+                isComposing = false;
+            });
+
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if (index + 1 < totalSteps) {
-                        navigateStep(index + 1);
-                    } else {
-                        submitQuiz();
+                    // 한글 조합 중이면 다음 단계 이동을 막아 글자 누수 및 중복 실행 방지
+                    if (e.isComposing || isComposing || e.keyCode === 229) {
+                        return;
                     }
+
+                    e.preventDefault();
+
+                    // 현재 인풋을 blur 처리하여 IME 조합을 완전히 종료
+                    input.blur();
+
+                    setTimeout(() => {
+                        if (index + 1 < totalSteps) {
+                            navigateStep(index + 1);
+                        } else {
+                            submitQuiz();
+                        }
+                    }, 50);
                 }
             });
         });
